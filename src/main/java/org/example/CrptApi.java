@@ -9,6 +9,7 @@ import lombok.Getter;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -149,7 +150,16 @@ public class CrptApi {
             StringBuilder urlString = new StringBuilder("https://" + host + methodPath);
             if (!queryParams.isEmpty()) {
                 urlString.append("?");
-                queryParams.forEach((key, value) -> urlString.append(key).append("=").append(value));
+                boolean first = true;
+                for (Map.Entry<String, String> entry : queryParams.entrySet()) {
+                    if (!first) {
+                        urlString.append("&");
+                    }
+                    urlString.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8))
+                            .append("=")
+                            .append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
+                    first = false;
+                }
             }
             return new URL(urlString.toString());
         }
